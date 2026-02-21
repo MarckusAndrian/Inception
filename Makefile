@@ -3,8 +3,8 @@ NAME = inception
 all: up
 
 up:
-	@mkdir -p /home/marckus/data/mariadb_data
-	@mkdir -p /home/marckus/data/wordpress_data
+	@mkdir -p /home/kandrian/data/mariadb_data
+	@mkdir -p /home/kandrian/data/wordpress_data
 	docker compose -f srcs/docker-compose.yml up -d --build
 
 down:
@@ -20,8 +20,8 @@ clean: down
 	docker system prune -af
 
 fclean: clean
-	@sudo rm -rf /home/marckus/data/mariadb_data
-	@sudo rm -rf /home/marckus/data/wordpress_data
+	@docker run --rm --privileged -v /home/kandrian/data:/data debian:12-slim sh -c "rm -rf /data/*" 2>/dev/null || true
+	@rm -rf /home/kandrian/data
 	docker volume rm -f $$(docker volume ls -q) 2>/dev/null || true
 
 re: fclean all

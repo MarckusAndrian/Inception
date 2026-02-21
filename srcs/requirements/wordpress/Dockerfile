@@ -1,9 +1,9 @@
 FROM debian:12-slim
 
 RUN apt-get update && apt-get install -y \
-    php \
     php-fpm \
     php-mysql \
+    php-cli \
     curl \
     wget \
     mariadb-client \
@@ -11,7 +11,6 @@ RUN apt-get update && apt-get install -y \
 
 COPY tools/wordpress.sh /usr/local/bin/wordpress.sh
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
-COPY conf/wp-config.php /var/www/html/wp-config.php
 
 RUN chmod +x /usr/local/bin/wordpress.sh
 
