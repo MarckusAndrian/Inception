@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Create DB and config root & wpsuer
+
 set -e
 
 WP_PATH="/var/www/html"
@@ -17,12 +19,13 @@ fi
 # Wait for MariaDB to be fully ready
 echo "Waiting for MariaDB to be ready..."
 until mysql -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -e "SELECT 1" &>/dev/null; do
-    echo "MariaDB is not ready yet. Retrying in 3 seconds..."
+    echo "Waiting for Mariadb to be ready..."
     sleep 3
 done
 echo "MariaDB is ready."
 
 # Install wp-cli if not present
+# Interface in terminal for installing and setting WP
 if [ ! -f /usr/local/bin/wp ]; then
     cd /tmp
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -58,7 +61,7 @@ if ! wp core is-installed --path="$WP_PATH" --allow-root 2>/dev/null; then
         --admin_email="$WORDPRESS_ADMIN_EMAIL" \
         --allow-root
 
-    # Create second user as required by subject
+    # Create second user 
     echo "Creating second user..."
     wp user create "$WORDPRESS_USER" "$WORDPRESS_USER_EMAIL" \
         --user_pass="$WORDPRESS_USER_PASSWORD" \

@@ -20,7 +20,7 @@ clean: down
 	docker system prune -af
 
 fclean: clean
-	@docker run --rm --privileged -v /home/kandrian/data:/data debian:12-slim sh -c "rm -rf /data/*" 2>/dev/null || true
+	@docker run --rm --privileged -v /home/kandrian/data:/data debian:bookworm sh -c "rm -rf /data/*" 2>/dev/null || true
 	@rm -rf /home/kandrian/data
 	docker volume rm -f $$(docker volume ls -q) 2>/dev/null || true
 

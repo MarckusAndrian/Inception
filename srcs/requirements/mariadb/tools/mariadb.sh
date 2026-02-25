@@ -14,6 +14,7 @@ mkdir -p /run/mysqld
 chown mysql:mysql /run/mysqld
 
 if [ ! -d /var/lib/mysql/${MYSQL_DATABASE} ]; then
+# while initializing the db, we need to start the server in the background to execute the SQL commands
     echo "Initializing MariaDB data directory..."
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
@@ -31,8 +32,10 @@ if [ ! -d /var/lib/mysql/${MYSQL_DATABASE} ]; then
 		CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
 		CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 		GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
-		ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
-		FLUSH PRIVILEGES;
+        # set the root pwd for security reasons
+    	ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+		# update RAM privileges
+        FLUSH PRIVILEGES;
 	EOF
 
     echo "Stopping temporary server..."
@@ -41,4 +44,6 @@ if [ ! -d /var/lib/mysql/${MYSQL_DATABASE} ]; then
     echo "MariaDB initialization complete."
 fi
 
+# it's for changing the 50-server.cnf file in
+# order to wp could connect to the db from outside the container
 exec mysqld --user=mysql --bind-address=0.0.0.0
